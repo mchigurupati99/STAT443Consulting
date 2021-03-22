@@ -1,0 +1,89 @@
+---
+title: "Untitled"
+author: "Michael Yun"
+date: "3/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+library(tidyverse)
+library(ggplot2)
+
+data = read.csv("C:/Users/Michael/Desktop/STAT 443/gt_2013.csv")
+attach(data)
+
+#Random stuff, skip to line 46.
+plot(log(AT), log(CO))
+plot(log(AP), log(CO))
+plot(AH, CO)
+plot(log(AH), log(CO))
+hist(CO)
+hist(AH)
+
+fit = lm(CO ~ AH)
+fit2 = lm(log(CO) ~ AH)
+fit3 = lm(CO ~ log(AH))
+fit4 = lm(log(CO) ~ log(AH))
+
+summary(fit) #best model
+summary(fit2)
+summary(fit3)
+summary(fit4)
+
+fit5 = lm(CO ~ I(AH^4)) #best model
+summary(fit5)
+fit6 = lm(CO ~ I(AH^2) + I(AH^4))
+summary(fit6)
+p = plot(I(AH), CO) +
+  abline(lm(CO ~ I(AH^4)),
+         col = "blue")
+
+#Removing CO outliers
+IQR = summary(CO)
+IQR_range = IQR[5] - IQR[2]
+lower = IQR[2] - IQR_range*1.5
+upper = IQR[5] + IQR_range*1.5
+
+#removes outliers based on IQR
+data_ro = data[!(data$CO > upper | data$CO < lower),]
+fit6 = lm(CO ~ I(AH^4), data = data_ro)
+summary(fit6)
+plot(data_ro$AH^4, data_ro$CO)
+
+#checking the correlation between each variable with CO
+names(data)
+cor(data)[,10]
+cor(data_ro)[,10]
+
+
+#Since TIT has the highest correlation with CO even with the outliers removed, let's graph it.
+library(ISLR)
+library(ggplot2)
+
+#With CO outliers
+ggplot(data, aes(TIT, CO)) + 
+  geom_point() + 
+  geom_smooth(method="lm", formula = y~x, se=FALSE, colour="blue")+
+  geom_smooth(method="lm", formula = y~poly(x, 2), se=FALSE, colour="red")+
+  geom_smooth(method="lm", formula = y~poly(x, 3), se=FALSE, colour="green")+
+  geom_smooth(method="lm", formula = y~poly(x, 4), se=FALSE, colour="orange")
+
+#Without CO outliers
+ggplot(data_ro, aes(TIT, CO)) + 
+  geom_point() + 
+  geom_smooth(method="lm", formula = y~x, se=FALSE, colour="blue")+
+  geom_smooth(method="lm", formula = y~poly(x, 2), se=FALSE, colour="red")+
+  geom_smooth(method="lm", formula = y~poly(x, 3), se=FALSE, colour="green")+
+  geom_smooth(method="lm", formula = y~poly(x, 4), se=FALSE, colour="orange")
+
+fit_blue = lm(CO ~ TIT, data = data_ro)
+summary(fit_blue)
+fit_red = lm(CO ~ poly(TIT, 2), data = data_ro)
+summary(fit_red)
+fit_green = lm(CO ~ poly(TIT, 3), data = data_ro)
+summary(fit_green) #Best Adjusted R-squared
+```
