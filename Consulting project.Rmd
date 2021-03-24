@@ -80,10 +80,28 @@ ggplot(data_ro, aes(TIT, CO)) +
   geom_smooth(method="lm", formula = y~poly(x, 3), se=FALSE, colour="green")+
   geom_smooth(method="lm", formula = y~poly(x, 4), se=FALSE, colour="orange")
 
-fit_blue = lm(CO ~ TIT, data = data_ro)
+fit_blue = lm(CO ~ TIT)
+fit_red= lm(CO ~ poly(TIT, 2))
+fit_green= lm(CO ~ poly(TIT, 3))
+
+fit_blue_ro = lm(CO ~ TIT, data = data_ro)
+fit_red_ro = lm(CO ~ poly(TIT, 2), data = data_ro)
+fit_green_ro = lm(CO ~ poly(TIT, 3), data = data_ro)
+
 summary(fit_blue)
-fit_red = lm(CO ~ poly(TIT, 2), data = data_ro)
 summary(fit_red)
-fit_green = lm(CO ~ poly(TIT, 3), data = data_ro)
-summary(fit_green) #Best Adjusted R-squared
+summary(fit_green)
+summary(fit_blue_ro)
+summary(fit_red_ro)
+summary(fit_green_ro) #Best Adjusted R-squared
+
+anova(fit_blue, fit_red, fit_green)
+
+#It's better to derive conclusions from the models without outliers like the one below, but the models with outliers were included for comparing model diagnostics.
+anova(fit_blue_ro, fit_red_ro, fit_green_ro)
+
+#Best model via Adjusted R-squared is the model with degree 3.
+#Best model via p-value from ANOVA comparison is the model with degree 2.
+
+
 ```
