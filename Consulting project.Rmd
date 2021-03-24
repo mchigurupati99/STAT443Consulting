@@ -102,6 +102,8 @@ anova(fit_blue_ro, fit_red_ro, fit_green_ro)
 
 #Best model via Adjusted R-squared is the model with degree 3.
 #Best model via p-value from ANOVA comparison is the model with degree 2.
+#This is surprising because poly(TIT, x) where x builds a model with a structure of a*TIT + b*TIT^2 + c*TIT^3, so this model should fit the data more.
+#This might be a sign of overfitting which is why the model with degree 2 proves better in the ANOVA test.
 
 
 ```
